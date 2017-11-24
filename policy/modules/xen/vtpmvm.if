@@ -1,0 +1,108 @@
+#
+# Copyright (c) 2017 Samana Group LLC
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# <summary>Service VM hosting the vTPM Admin</summary>
+
+########################################
+## <summary>
+##	Allow the specified domain to
+##	mmuext_op to vTPM Admin domain
+## </summary>
+## <param name="type">
+##	<summary>
+##	Type of the domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`vtpmvm_mmuext_op_mmu',`
+	gen_require(`
+		type vtpmvm_t;
+	')
+
+	allow $1 vtpmvm_t:mmu mmuext_op;
+')
+########################################
+## <summary>
+##	Allow the specified type to map write vtpmvm grants.
+## </summary>
+## <param name="type">
+##	<summary>
+##	Type of the domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`vtpmvm_map_write_grant',`
+	gen_require(`
+		type vtpmvm_t;
+	')
+
+	allow $1 vtpmvm_t:grant map_write;
+')
+########################################
+## <summary>
+##	Allow the specified domain to
+##	create a private event type
+##	for use with vtpmvm.
+## </summary>
+## <param name="dst_type">
+##	<summary>
+##	Type of the destination domain.
+##	</summary>
+## </param>
+## <param name="event_type">
+##	<summary>
+##	Type of the event vtpmvm will create.
+##	</summary>
+## </param>
+#
+interface(`vtpmvm_event_dst',`
+	gen_require(`
+		type vtpmvm_t;
+	')
+
+	create_channel($1, vtpmvm_t, $2)
+
+	allow $1 $2:event send;
+	allow vtpmvm_t $2:event create;
+')
+########################################
+## <summary>
+##	Allow vtpmvm to create an event type
+##	through a transition destined for
+##	the parameter domain.
+## </summary>
+## <param name="dst_type">
+##	<summary>
+##	Type of the destination domain.
+##	</summary>
+## </param>
+## <param name="event_type">
+##	<summary>
+##	Type of the event vtpmvm will create.
+##	</summary>
+## </param>
+#
+interface(`vtpmvm_event_src',`
+	gen_require(`
+		type vtpmvm_t;
+	')
+
+	create_channel(vtpmvm_t, $1, $2)
+
+	allow vtpmvm_t $2:event { status send };
+')

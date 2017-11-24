@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2017 Samana Group LLC
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+policy_module(vtpmdomu, 0.1)
+
+########################################
+#
+# Declarations
+#
+
+type vtpmdomu_t;
+xen_domain_type(vtpmdomu_t)
+xen_hvm_type(vtpmdomu_t)
+
+#types for event channel between vtpmdomu and vtpmvm
+type vtpmdomu-vtpmvm_evchn_t;
+xen_event_type(vtpmdomu-vtpmvm_evchn_t)
+vtpmvm_event_dst(vtpmdomu_t, vtpmdomu-vtpmvm_evchn_t)
+
+type vtpmvm-vtpmdomu_evchn_t;
+xen_event_type(vtpmvm-vtpmdomu_evchn_t)
+vtpmvm_event_src(vtpmdomu_t, vtpmvm-vtpmdomu_evchn_t)
+
+#types for event channel between vtpmdomu and dom0
+type vtpmdomu-dom0_evchn_t;
+xen_event_type(vtpmdomu-dom0_evchn_t)
+dom0_event_dst(vtpmdomu_t, vtpmdomu-dom0_evchn_t)
+
+type dom0-vtpmdomu_evchn_t;
+xen_event_type(dom0-vtpmdomu_evchn_t)
+dom0_event_src(vtpmdomu_t, dom0-vtpmdomu_evchn_t)
+
+
+
+########################################
+#
+# vTPM DomU Local policy
+#
+allow vtpmdomu_t vtpmdomu_t:mmu mmuext_op;
+xen_write_console(vtpmdomu_t)
+

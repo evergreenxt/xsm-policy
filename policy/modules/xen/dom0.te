@@ -54,6 +54,10 @@ allow dom0_t stubdom_t:domain2 make_priv_for;
 
 allow dom0_t xen_t:resource setup;
 
+# This policy will allow policy reloads without reboots
+# remove after troubleshooting
+allow dom0_t security_t:security load_policy;
+
 domio_map_rw_mmu(dom0_t)
 
 # dom0 access to service VMs
@@ -71,6 +75,9 @@ icavm_map_write_grant(dom0_t)
 
 nilfvm_map_write_grant(dom0_t)
 
+vtpmvm_map_write_grant(dom0_t)
+vtpmdomu_map_write_grant(dom0_t)
+
 stubdom_copy_grant(dom0_t)
 stubdom_send_v4v(dom0_t)
 stubdom_map_write_grant(dom0_t)
@@ -84,3 +91,4 @@ pirq_admin_device(dom0_t)
 #pirq_vector_event(dom0_t)
 security_ssid_convert(dom0_t)
 xen_rw_console(dom0_t)
+
